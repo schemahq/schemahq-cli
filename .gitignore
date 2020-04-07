@@ -1,2 +1,3 @@
 schemahq_cli.egg-info
 *.pyc
+dist
