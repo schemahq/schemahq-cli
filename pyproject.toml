@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "schemahq"
+version = "0.1.0"
+description = ""
+authors = ["Nathan Cahill <nathan@nathancahill.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+fire = "^0.3.0"
+migra = {extras = ["pg"], version = "^1.0.1585875302"}
+sqlbag = "^0.1.1579049654"
+requests = "^2.23.0"
+colorful = "^0.5.4"
+
+[tool.poetry.dev-dependencies]
+pytest = "^4.6"
+black = "^19.10b0"
+
+[tool.poetry.scripts]
+schemahq = "schemahq_cli.cli:main"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

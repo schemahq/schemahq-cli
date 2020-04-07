@@ -1,0 +1,21 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-python@v1
+              with:
+                python-version: 3.8
+            - uses: Gr1N/setup-poetry@v2
+            - uses: actions/cache@v1
+                with:
+                  path: ~/.cache/pypoetry/virtualenvs
+                  key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+                  restore-keys: |
+                    ${{ runner.os }}-poetry-
+            - run: poetry run black . --check
