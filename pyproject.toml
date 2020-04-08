@@ -11,6 +11,7 @@ migra = {extras = ["pg"], version = "^1.0.1585875302"}
 sqlbag = "^0.1.1579049654"
 requests = "^2.23.0"
 colorful = "^0.5.4"
+pgformatter = "^0.1.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"

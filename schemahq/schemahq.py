@@ -5,6 +5,7 @@ import string
 from contextlib import contextmanager
 from unittest.mock import patch
 
+from pgformatter import pg_format
 import colorful as cf
 from sqlalchemy.pool import NullPool
 from sqlbag import (
@@ -117,7 +118,7 @@ def diff(
             print("Run again with", cf.bold("--unsafe"))
             sys.exit(os.EX_USAGE)
 
-        print(sql)
+        print(pg_format(sql.encode(), unquote=True).decode())
 
         if apply:
             print(cf.bold("Applying..."))
@@ -204,8 +205,8 @@ def init(db: str = None, schema: str = "schema.sql", overwrite: bool = False):
         # Get SQL
         sql = m.sql
 
-    with open(schema, "w") as f:
-        f.write(sql)
+    with open(schema, "wb") as f:
+        f.write(pg_format(sql.encode(), unquote=True))
 
     print(cf.bold("All done! ✨"))
     print(f'Created file "{schema}" with schema from "{base_uri.database}"')
