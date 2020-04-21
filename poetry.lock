@@ -134,7 +134,7 @@ description = ""
 name = "migra"
 optional = false
 python-versions = "*"
-version = "1.0"
+version = "1.1"
 
 [package.dependencies]
 schemainspect = "branch master"
@@ -145,7 +145,7 @@ sqlbag = "*"
 pg = ["psycopg2-binary"]
 
 [package.source]
-reference = "54e612f9f37a26cc41423d761cbe61e753f3b2b5"
+reference = "9ca657991144227e804c83fc7837ae4b4cd8398e"
 type = "git"
 url = "https://github.com/schemahq/migra.git"
 [[package]]
