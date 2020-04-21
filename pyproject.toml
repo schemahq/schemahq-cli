@@ -12,6 +12,8 @@ sqlbag = "^0.1.1579049654"
 requests = "^2.23.0"
 colorful = "^0.5.4"
 pgformatter = "^0.1.4"
+sqlparse = "^0.3.1"
+psycopg2 = "^2.8.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"

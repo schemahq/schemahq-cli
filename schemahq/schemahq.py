@@ -16,9 +16,14 @@ from sqlbag import (
     create_database,
     drop_database,
     load_sql_from_file,
+    sql_from_file,
+    raw_execute,
     copy_url,
 )
 from migra import Migration, UnsafeMigrationException
+from migra.changes import statements_for_changes
+
+from .roles import extract_roles
 
 cf.use_style("solarized")
 
@@ -86,15 +91,22 @@ def diff(
 
     with temporary_database(base_uri) as sTemp, S(db) as sFrom:
         # Run schema in temporary database
+        roles = []
+
         try:
-            load_sql_from_file(sTemp, schema)
+            roles, statements = extract_roles(sql_from_file(schema))
+            raw_execute(sTemp, statements)
         except Exception as e:
             print(cf.bold_red("Error:"), e, file=sys.stderr)
             sys.exit(os.EX_DATAERR)
 
+        # Compare roles
+        # get_inspector()
+
         # Compare
         m = Migration(sFrom, sTemp)
         m.add_all_changes(privileges=True)
+        m.add(statements_for_changes(m.changes.i_from.roles, roles))
 
         if not m.statements:
             print(cf.bold("All done! ✨"))
