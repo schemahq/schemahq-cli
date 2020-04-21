@@ -7,7 +7,7 @@ authors = ["Nathan Cahill <nathan@nathancahill.com>"]
 [tool.poetry.dependencies]
 python = "^3.6"
 fire = "^0.3.0"
-migra = {git = "https://github.com/schemahq/migra.git#egg=migra", branch = "master"}
+migra = {git = "https://github.com/schemahq/migra.git"}
 sqlbag = "^0.1.1579049654"
 requests = "^2.23.0"
 colorful = "^0.5.4"
