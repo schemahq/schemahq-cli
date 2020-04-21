@@ -94,7 +94,7 @@ def diff(
 
         # Compare
         m = Migration(sFrom, sTemp)
-        m.add_all_changes()
+        m.add_all_changes(privileges=True)
 
         if not m.statements:
             print(cf.bold("All done! ✨"))
