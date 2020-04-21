@@ -16,3 +16,4 @@ jobs:
             - run: echo "::add-path::$HOME/.poetry/bin"
             - run: poetry install
             - run: poetry run black . --check
+            - run: poetry run pytest

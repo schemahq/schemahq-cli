@@ -19,6 +19,7 @@ jobs:
             - run: echo "::add-path::$HOME/.poetry/bin"
             - run: poetry install
             - run: poetry run black . --check
+            - run: poetry run pytest
             - run: poetry build
             - run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
             - run: poetry publish
