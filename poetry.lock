@@ -129,26 +129,6 @@ docs = ["sphinx", "rst.linker"]
 testing = ["packaging", "importlib-resources"]
 
 [[package]]
-category = "main"
-description = ""
-name = "migra"
-optional = false
-python-versions = "*"
-version = "1.1"
-
-[package.dependencies]
-schemainspect = "branch master"
-six = "*"
-sqlbag = "*"
-
-[package.extras]
-pg = ["psycopg2-binary"]
-
-[package.source]
-reference = "9ca657991144227e804c83fc7837ae4b4cd8398e"
-type = "git"
-url = "https://github.com/schemahq/migra.git"
-[[package]]
 category = "dev"
 description = "More routines for operating on iterables, beyond itertools"
 marker = "python_version > \"2.7\""
@@ -293,20 +273,32 @@ socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
 
 [[package]]
 category = "main"
-description = ""
-name = "schemainspect"
+description = "Like `diff` but for PostgreSQL schemas"
+name = "schemahq-migra"
 optional = false
 python-versions = "*"
-version = "0.1"
+version = "1.0.0"
+
+[package.dependencies]
+schemahq-schemainspect = "1.0.0"
+six = "*"
+sqlbag = "*"
+
+[package.extras]
+pg = ["psycopg2-binary"]
+
+[[package]]
+category = "main"
+description = "Schema inspection for PostgreSQL (and possibly others)"
+name = "schemahq-schemainspect"
+optional = false
+python-versions = "*"
+version = "1.0.0"
 
 [package.dependencies]
 six = "*"
 sqlalchemy = "*"
 
-[package.source]
-reference = "9a471103b7543e6ca708b45b218a5c8c57304ac8"
-type = "git"
-url = "https://github.com/schemahq/schemainspect.git"
 [[package]]
 category = "main"
 description = "Python 2 and 3 compatibility utilities"
@@ -420,7 +412,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "4ab1ddf892616767387e928d190d34a4a431abd11ac0a347d8ddba1a94bed40c"
+content-hash = "a5085fff103c31d4b47099d56711d2efc0a1e118d1f7cf48c2ffc8fedcd6e6cb"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -471,7 +463,6 @@ importlib-metadata = [
     {file = "importlib_metadata-1.6.0-py2.py3-none-any.whl", hash = "sha256:2a688cbaa90e0cc587f1df48bdc97a6eadccdcd9c35fb3f976a09e3b5016d90f"},
     {file = "importlib_metadata-1.6.0.tar.gz", hash = "sha256:34513a8a0c4962bc66d35b359558fd8a5e10cd472d37aec5f66858addef32c1e"},
 ]
-migra = []
 more-itertools = [
     {file = "more-itertools-8.2.0.tar.gz", hash = "sha256:b1ddb932186d8a6ac451e1d95844b382f55e12686d51ca0c68b6f61f2ab7a507"},
     {file = "more_itertools-8.2.0-py3-none-any.whl", hash = "sha256:5dd8bcf33e5f9513ffa06d5ad33d78f31e1931ac9a18f33d37e77a180d393a7c"},
@@ -549,7 +540,14 @@ requests = [
     {file = "requests-2.23.0-py2.py3-none-any.whl", hash = "sha256:43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee"},
     {file = "requests-2.23.0.tar.gz", hash = "sha256:b3f43d496c6daba4493e7c431722aeb7dbc6288f52a6e04e7b6023b0247817e6"},
 ]
-schemainspect = []
+schemahq-migra = [
+    {file = "schemahq-migra-1.0.0.tar.gz", hash = "sha256:0a38b93ab4d5a8f134a5b6caa9a59a9014ba12c98b149894c1c241bbd27be0a4"},
+    {file = "schemahq_migra-1.0.0-py2.py3-none-any.whl", hash = "sha256:dd7b208d67b6c936cd464c09ff9e59bad9ffeada76d16d533398b77d51bac7df"},
+]
+schemahq-schemainspect = [
+    {file = "schemahq-schemainspect-1.0.0.tar.gz", hash = "sha256:fe70c7444faa20478996f11cbcd748392818870ec8dc3a172c16aca3a827e98f"},
+    {file = "schemahq_schemainspect-1.0.0-py2.py3-none-any.whl", hash = "sha256:baf4db10935afaed83cb097c086d6328d8198a2f66e57ead925c717828328c13"},
+]
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
     {file = "six-1.14.0.tar.gz", hash = "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a"},
