@@ -90,23 +90,39 @@ def diff(
     patch.start()
 
     with temporary_database(base_uri) as sTemp, S(db) as sFrom:
-        # Run schema in temporary database
-        roles = []
+        roles, statements = extract_roles(sql_from_file(schema))
 
+        roles_m = Migration(sFrom, sTemp)
+
+        from_roles = roles_m.changes.i_from.roles
+
+        # Exclude all unspecified roles
+        for k in set(from_roles.keys()) - set(roles.keys()):
+            del from_roles[k]
+
+        # Compare roles
+        roles_m.add(statements_for_changes(from_roles, roles))
+
+        if roles_m.statements:
+            roles_m.set_safety(True)
+            roles_sql = roles_m.sql
+            print(pg_format(roles_sql.encode(), unquote=True).decode())
+            print(cf.bold("Applying roles..."))
+            roles_m.apply()
+            sFrom.commit()
+            print(cf.bold("Done."))
+
+        # Run schema in temporary database
         try:
-            roles, statements = extract_roles(sql_from_file(schema))
             raw_execute(sTemp, statements)
         except Exception as e:
             print(cf.bold_red("Error:"), e, file=sys.stderr)
             sys.exit(os.EX_DATAERR)
 
-        # Compare roles
-        # get_inspector()
-
         # Compare
         m = Migration(sFrom, sTemp)
+        m.set_safety(not unsafe)
         m.add_all_changes(privileges=True)
-        m.add(statements_for_changes(m.changes.i_from.roles, roles))
 
         if not m.statements:
             print(cf.bold("All done! ✨"))
@@ -114,9 +130,6 @@ def diff(
             sys.exit()
 
         sql = ""
-
-        if unsafe:
-            m.set_safety(False)
 
         # Get SQL
         try:

@@ -31,7 +31,6 @@ def roles(statements):
 
         role = InspectedRole(
             name,
-            "NOSUPERUSER",
             "NOCREATEDB",
             "NOCREATEROLE",
             "INHERIT",
@@ -39,7 +38,6 @@ def roles(statements):
             "NOREPLICATION",
             "NOBYPASSRLS",
             -1,
-            None,
             None,
         )
 
@@ -56,11 +54,6 @@ def roles(statements):
                 continue
 
             if option == "PASSWORD":
-                role.password = str(options[i + 1]).strip("'")
-
-                if role.password == "NULL" or role.password == "":
-                    role.password = None
-
                 i += 1
                 continue
 
@@ -72,9 +65,6 @@ def roles(statements):
             if option == "CONNECTION":
                 role.connection_limit = int(str(options[i + 3]))
                 i += 3
-
-            if option == "SUPERUSER" or option == "NOSUPERUSER":
-                role.superuser = option
 
             if option == "CREATEDB" or option == "NOCREATEDB":
                 role.createdb = option
