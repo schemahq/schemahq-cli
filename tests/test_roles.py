@@ -42,7 +42,6 @@ def test_roles():
     role = roles["admin"]
 
     assert role.name == "admin"
-    assert role.password is None
 
     roles, _ = extract_roles("CREATE ROLE jonathan LOGIN;")
     role = roles["jonathan"]
@@ -56,7 +55,6 @@ def test_roles():
     role = roles["george"]
 
     assert role.name == "george"
-    assert role.superuser == "SUPERUSER"
     assert role.createdb == "CREATEDB"
     assert role.inherit == "INHERIT"
     assert role.login == "LOGIN"
@@ -68,25 +66,21 @@ def test_roles():
     role = roles["davide"]
 
     assert role.name == "davide"
-    assert role.password == "jw8s0F4"
 
     roles, _ = extract_roles("CREATE ROLE davide WITH PASSWORD '';")
     role = roles["davide"]
 
     assert role.name == "davide"
-    assert role.password is None
 
     roles, _ = extract_roles("CREATE ROLE davide WITH PASSWORD NULL;")
     role = roles["davide"]
 
     assert role.name == "davide"
-    assert role.password is None
 
     roles, _ = extract_roles("CREATE ROLE davide2 WITH ENCRYPTED PASSWORD 'jw8s0F4';")
     role = roles["davide2"]
 
     assert role.name == "davide2"
-    assert role.password == "jw8s0F4"
 
     roles, _ = extract_roles(
         "CREATE ROLE miriam WITH LOGIN PASSWORD 'jw8s0F4' VALID UNTIL '2005-01-01';"
@@ -95,7 +89,6 @@ def test_roles():
 
     assert role.name == "miriam"
     assert role.login == "LOGIN"
-    assert role.password == "jw8s0F4"
     assert role.valid_until == "2005-01-01"
 
     roles, _ = extract_roles("CREATE ROLE admin WITH CREATEDB CREATEROLE;")
