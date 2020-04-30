@@ -63,34 +63,35 @@ def create_admin_patch(db_uri):
     return patch("sqlbag.createdrop.admin_db_connection", new=admin_connection)
 
 
-def diff(
-    schema: str, db: str, unsafe: bool = False, apply: bool = False,
-):
-    """
-    Diff a file of SQL statements against a database.
-    :param schema: The SQL schema to match against.
-    :param db: The database to target.
-    :param unsafe: Generate unsafe statements.
-    :param apply: Apply the statements to bring the target database up to date.
-    """
-    if not os.path.exists(schema):
-        print(cf.bold_red("Error:"), f'Could not find file "{schema}"', file=sys.stderr)
-        sys.exit(os.EX_OSFILE)
+class DatabaseDoesNotExist(Exception):
+    def __init__(self, database):
+        self.database = database
 
+
+class SQLSyntaxError(Exception):
+    def __init__(self, error, statements):
+        self.error = error
+        self.statements = statements
+
+
+def diff(
+    sql_statements: str,
+    db: str,
+    unsafe: bool = False,
+    apply: bool = False,
+    chatty: bool = False,
+):
     base_uri = copy_url(db)
     target_exists = database_exists(base_uri, test_can_select=True)
 
     if not target_exists:
-        print(
-            cf.bold_red("Error:"), f'Database "{base_uri.database}" does not exist.',
-        )
-        sys.exit(os.EX_NOHOST)
+        raise DatabaseDoesNotExist(base_uri.database)
 
     patch = create_admin_patch(base_uri)
     patch.start()
 
     with temporary_database(base_uri) as sTemp, S(db) as sFrom:
-        roles, statements = extract_roles(sql_from_file(schema))
+        roles, statements = extract_roles(sql_statements)
 
         roles_m = Migration(sFrom, sTemp)
 
@@ -106,18 +107,22 @@ def diff(
         if roles_m.statements:
             roles_m.set_safety(True)
             roles_sql = roles_m.sql
-            print(pg_format(roles_sql.encode(), unquote=True).decode())
-            print(cf.bold("Applying roles..."))
+
+            if chatty:
+                print(pg_format(roles_sql.encode(), unquote=True).decode())
+                print(cf.bold("Applying roles..."))
+
             roles_m.apply()
             sFrom.commit()
-            print(cf.bold("Done."))
+
+            if chatty:
+                print(cf.bold("Done."))
 
         # Run schema in temporary database
         try:
             raw_execute(sTemp, statements)
         except Exception as e:
-            print(cf.bold_red("Error:"), e, file=sys.stderr)
-            sys.exit(os.EX_DATAERR)
+            raise SQLSyntaxError(e, statements)
 
         # Compare
         m = Migration(sFrom, sTemp)
@@ -125,9 +130,11 @@ def diff(
         m.add_all_changes(privileges=True)
 
         if not m.statements:
-            print(cf.bold("All done! ✨"))
-            print(f'Database "{base_uri.database}" is up to date.')
-            sys.exit()
+            if chatty:
+                print(cf.bold("All done! ✨"))
+                print(f'Database "{base_uri.database}" is up to date.')
+
+            return None, False
 
         sql = ""
 
@@ -135,21 +142,64 @@ def diff(
         try:
             sql = m.sql
         except UnsafeMigrationException:
-            print(
-                cf.bold_yellow("Careful:"),
-                "Unsafe statements generated.",
-                file=sys.stderr,
-            )
-            print("Run again with", cf.bold("--unsafe"))
-            sys.exit(os.EX_USAGE)
+            m.set_safety(False)
+            sql = m.sql
+            formatted = pg_format(sql.encode(), unquote=True).decode()
+            return formatted, True
 
-        print(pg_format(sql.encode(), unquote=True).decode())
+        formatted = pg_format(sql.encode(), unquote=True).decode()
+
+        if chatty:
+            print(formatted)
 
         if apply:
-            print(cf.bold("Applying..."))
+            if chatty:
+                print(cf.bold("Applying..."))
+
             m.apply()
-            print(cf.bold("All done! ✨"))
-            print(f'Database "{base_uri.database}" has been updated.')
+
+            if chatty:
+                print(cf.bold("All done! ✨"))
+                print(f'Database "{base_uri.database}" has been updated.')
+
+        return formatted, False
+
+
+def diff_file(
+    schema: str, db: str, unsafe: bool = False, apply: bool = False,
+):
+    """
+    Diff a file of SQL statements against a database.
+    :param schema: The SQL schema to match against.
+    :param db: The database to target.
+    :param unsafe: Generate unsafe statements.
+    :param apply: Apply the statements to bring the target database up to date.
+    """
+    if not os.path.exists(schema):
+        print(cf.bold_red("Error:"), f'Could not find file "{schema}"', file=sys.stderr)
+        sys.exit(os.EX_OSFILE)
+
+    sql_statements = sql_from_file(schema)
+
+    try:
+        statements, generated_unsafe = diff(sql_statements, db, unsafe, apply, True)
+    except DatabaseDoesNotExist as e:
+        print(
+            cf.bold_red("Error:"),
+            f'Database "{e.database}" does not exist.',
+            file=sys.stderr,
+        )
+        sys.exit(os.EX_NOHOST)
+    except SQLSyntaxError as e:
+        print(cf.bold_red("Error:"), e.error, file=sys.stderr)
+        sys.exit(os.EX_DATAERR)
+
+    if generated_unsafe:
+        print(
+            cf.bold_yellow("Careful:"), "Unsafe statements generated.", file=sys.stderr,
+        )
+        print("Run again with", cf.bold("--unsafe"))
+        sys.exit(os.EX_USAGE)
 
 
 def apply_statements(statements: str, db: str):
@@ -240,6 +290,6 @@ def init(db: str = None, schema: str = "schema.sql", overwrite: bool = False):
 
 schemahq = {
     "apply": apply_statements,
-    "diff": diff,
+    "diff": diff_file,
     "init": init,
 }
