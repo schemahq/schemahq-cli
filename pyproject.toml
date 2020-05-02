@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "schemahq"
-version = "0.1.6"
+version = "0.1.7"
 description = ""
 authors = ["Nathan Cahill <nathan@nathancahill.com>"]
 
@@ -11,7 +11,7 @@ schemahq-migra = "^1.0.6"
 sqlbag = "^0.1.1579049654"
 requests = "^2.23.0"
 colorful = "^0.5.4"
-pgformatter = "^0.1.4"
+pgformatter = "^0.1.5"
 sqlparse = "^0.3.1"
 psycopg2 = "^2.8.5"
 
