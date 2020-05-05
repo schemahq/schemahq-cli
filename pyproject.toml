@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "schemahq"
-version = "0.1.7"
+version = "0.1.8"
 description = ""
 authors = ["Nathan Cahill <nathan@nathancahill.com>"]
 
@@ -13,7 +13,7 @@ requests = "^2.23.0"
 colorful = "^0.5.4"
 pgformatter = "^0.1.5"
 sqlparse = "^0.3.1"
-psycopg2 = "^2.8.5"
+psycopg2-binary = "^2.8.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
