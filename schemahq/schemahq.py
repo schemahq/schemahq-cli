@@ -20,6 +20,7 @@ from sqlbag import (
     raw_execute,
     copy_url,
 )
+from schemainspect import NullInspector
 from migra import Migration, UnsafeMigrationException
 from migra.changes import statements_for_changes
 
@@ -82,19 +83,13 @@ def diff(
     chatty: bool = False,
 ):
     base_uri = copy_url(db)
-    target_exists = database_exists(base_uri, test_can_select=True)
-
-    if not target_exists:
-        raise DatabaseDoesNotExist(base_uri.database)
-
     patch = create_admin_patch(base_uri)
     patch.start()
 
-    with temporary_database(base_uri) as sTemp, S(db) as sFrom:
-        roles, statements = extract_roles(sql_statements)
+    roles, statements = extract_roles(sql_statements)
 
-        roles_m = Migration(sFrom, sTemp)
-
+    with temporary_database(base_uri) as sTemp:
+        roles_m = Migration(sTemp, NullInspector())
         from_roles = roles_m.changes.i_from.roles
 
         # Exclude all unspecified roles
@@ -113,56 +108,59 @@ def diff(
                 print(cf.bold("Applying roles..."))
 
             roles_m.apply()
-            sFrom.commit()
+            sTemp.commit()
 
             if chatty:
                 print(cf.bold("Done."))
 
-        # Run schema in temporary database
-        try:
-            raw_execute(sTemp, statements)
-        except Exception as e:
-            raise SQLSyntaxError(e, statements)
+        target_exists = database_exists(base_uri, test_can_select=True)
 
-        # Compare
-        m = Migration(sFrom, sTemp)
-        m.set_safety(not unsafe)
-        m.add_all_changes(privileges=True)
+        with S(db) if target_exists else temporary_database(base_uri) as sFrom:
+            # Run schema in temporary database
+            try:
+                raw_execute(sTemp, statements)
+            except Exception as e:
+                raise SQLSyntaxError(e, statements)
 
-        if not m.statements:
-            if chatty:
-                print(cf.bold("All done! ✨"))
-                print(f'Database "{base_uri.database}" is up to date.')
+            # Compare
+            m = Migration(sFrom, sTemp)
+            m.set_safety(not unsafe)
+            m.add_all_changes(privileges=True)
 
-            return None, False
+            if not m.statements:
+                if chatty:
+                    print(cf.bold("All done! ✨"))
+                    print(f'Database "{base_uri.database}" is up to date.')
 
-        sql = ""
+                return None, False
 
-        # Get SQL
-        try:
-            sql = m.sql
-        except UnsafeMigrationException:
-            m.set_safety(False)
-            sql = m.sql
+            sql = ""
+
+            # Get SQL
+            try:
+                sql = m.sql
+            except UnsafeMigrationException:
+                m.set_safety(False)
+                sql = m.sql
+                formatted = pg_format(sql.encode(), unquote=True).decode()
+                return formatted, True
+
             formatted = pg_format(sql.encode(), unquote=True).decode()
-            return formatted, True
-
-        formatted = pg_format(sql.encode(), unquote=True).decode()
-
-        if chatty:
-            print(formatted)
-
-        if apply:
-            if chatty:
-                print(cf.bold("Applying..."))
-
-            m.apply()
 
             if chatty:
-                print(cf.bold("All done! ✨"))
-                print(f'Database "{base_uri.database}" has been updated.')
+                print(formatted)
 
-        return formatted, False
+            if apply:
+                if chatty:
+                    print(cf.bold("Applying..."))
+
+                m.apply()
+
+                if chatty:
+                    print(cf.bold("All done! ✨"))
+                    print(f'Database "{base_uri.database}" has been updated.')
+
+            return formatted, False
 
 
 def diff_file(
