@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "schemahq"
-version = "0.1.9"
+version = "0.1.10"
 description = ""
 authors = ["Nathan Cahill <nathan@nathancahill.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
 fire = "^0.3.0"
-schemahq-migra = "^1.0.7"
+schemahq-migra = "^1.0.8"
 sqlbag = "^0.1.1579049654"
 requests = "^2.23.0"
 colorful = "^0.5.4"

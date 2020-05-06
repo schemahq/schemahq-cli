@@ -277,10 +277,10 @@ description = "Like `diff` but for PostgreSQL schemas"
 name = "schemahq-migra"
 optional = false
 python-versions = "*"
-version = "1.0.7"
+version = "1.0.8"
 
 [package.dependencies]
-schemahq-schemainspect = "*"
+schemahq-schemainspect = ">=1.0.10,<2.0.0"
 six = "*"
 sqlbag = "*"
 
@@ -293,7 +293,7 @@ description = "Schema inspection for PostgreSQL (and possibly others)"
 name = "schemahq-schemainspect"
 optional = false
 python-versions = "*"
-version = "1.0.9"
+version = "1.0.10"
 
 [package.dependencies]
 six = "*"
@@ -412,7 +412,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "e3f3e09ed32fcdddcfa753bbfb6729fbcee40cb42e981102647205e2a24ddd77"
+content-hash = "b785d765150a464ab38ea2e2497f3b7278b6516f6b11079a5da41c8c8d7ab547"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -558,12 +558,12 @@ requests = [
     {file = "requests-2.23.0.tar.gz", hash = "sha256:b3f43d496c6daba4493e7c431722aeb7dbc6288f52a6e04e7b6023b0247817e6"},
 ]
 schemahq-migra = [
-    {file = "schemahq-migra-1.0.7.tar.gz", hash = "sha256:fbbc71425b67d70c69bb5565f4075d0923c7ef9d8d1a8704c60b0f129b256e5a"},
-    {file = "schemahq_migra-1.0.7-py2.py3-none-any.whl", hash = "sha256:c77a8814aacb5fd5fc9214b1ffe2285ebad8144bc7401c671d5b360554fcf4cf"},
+    {file = "schemahq-migra-1.0.8.tar.gz", hash = "sha256:bccac8ca6c7e264c4cad1c56529fdca1ad78c71d3374e9b7ecdfd712770c61c2"},
+    {file = "schemahq_migra-1.0.8-py2.py3-none-any.whl", hash = "sha256:4cacbf2071ce3540779acba07c0190ede6a2dc0f701b4470961970a7b87ba3ba"},
 ]
 schemahq-schemainspect = [
-    {file = "schemahq-schemainspect-1.0.9.tar.gz", hash = "sha256:301d987b898f6e4d80af5d0c50ce14d9f546713901d65d5aaefa04b868156e68"},
-    {file = "schemahq_schemainspect-1.0.9-py2.py3-none-any.whl", hash = "sha256:b96e3dee72da9fa122566b9e860b9cff8f325804d248bde493be775c4843ace3"},
+    {file = "schemahq-schemainspect-1.0.10.tar.gz", hash = "sha256:3c88abd1b03f34c48a68ef7f708ef0a9c7013c296c980f7ad2e2b52a69398dc6"},
+    {file = "schemahq_schemainspect-1.0.10-py2.py3-none-any.whl", hash = "sha256:f1396a9f14d7178ae6958d81fc2175ef2e93b5520142fc6f87ae25a9b0a4a9be"},
 ]
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
