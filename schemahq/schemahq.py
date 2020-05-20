@@ -104,7 +104,7 @@ def diff(
             roles_sql = roles_m.sql
 
             if chatty:
-                print(pg_format(roles_sql.encode(), unquote=True).decode())
+                print(pg_format(roles_sql.encode(), unquote=False).decode())
                 print(cf.bold("Applying roles..."))
 
             roles_m.apply()
@@ -142,10 +142,10 @@ def diff(
             except UnsafeMigrationException:
                 m.set_safety(False)
                 sql = m.sql
-                formatted = pg_format(sql.encode(), unquote=True).decode()
+                formatted = pg_format(sql.encode(), unquote=False).decode()
                 return formatted, True
 
-            formatted = pg_format(sql.encode(), unquote=True).decode()
+            formatted = pg_format(sql.encode(), unquote=False).decode()
 
             if chatty:
                 print(formatted)
@@ -279,7 +279,7 @@ def init(db: str = None, schema: str = "schema.sql", overwrite: bool = False):
         sql = m.sql
 
     with open(schema, "wb") as f:
-        f.write(pg_format(sql.encode(), unquote=True))
+        f.write(pg_format(sql.encode(), unquote=False))
 
     print(cf.bold("All done! ✨"))
     print(f'Created file "{schema}" with schema from "{base_uri.database}"')
