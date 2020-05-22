@@ -11,7 +11,6 @@ comment = re.compile("--.*?$", re.MULTILINE)
 def extract_roles(raw):
     without_multiline_comments = multiline_comment.sub("", raw)
     without_comments = comment.sub("", without_multiline_comments)
-    print(without_comments)
     statements = sqlparse.split(without_comments)
     roleStatements = []
     other = ""
