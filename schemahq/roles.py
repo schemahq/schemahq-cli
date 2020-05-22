@@ -1,10 +1,18 @@
+import re
 from collections import OrderedDict as od
 import sqlparse
 from schemainspect.pg.obj import InspectedRole
 
 
+multiline_comment = re.compile('/\*.*?\*/', re.DOTALL)
+comment = re.compile('--.*?$', re.MULTILINE)
+
+
 def extract_roles(raw):
-    statements = sqlparse.split(raw)
+    without_multiline_comments = multiline_comment.sub('', raw)
+    without_comments = comment.sub('', without_multiline_comments)
+    print(without_comments)
+    statements = sqlparse.split(without_comments)
     roleStatements = []
     other = ""
 
