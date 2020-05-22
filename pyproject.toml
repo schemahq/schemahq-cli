@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "schemahq"
-version = "0.1.13"
+version = "0.1.14"
 description = ""
 authors = ["Nathan Cahill <nathan@nathancahill.com>"]
 
